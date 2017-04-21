@@ -14,7 +14,7 @@ use Think\Model;
 class PublicController extends Controller
 {
 //    登陆
-    public function login()
+    public function login1()
     {
         $username = I("post.username");
         $passwd = I("post.password");
