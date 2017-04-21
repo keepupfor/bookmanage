@@ -7,7 +7,7 @@ class BaseController extends Controller {
         parent::__construct();
         if(!check_login())
         {
-            $this->error('请先登录！',U('Login/login'));
+            $this->error('请先登录！',U('Public/login'));
         }
     }
 }

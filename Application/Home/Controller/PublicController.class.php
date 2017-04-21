@@ -14,17 +14,8 @@ use Think\Model;
 class PublicController extends Controller
 {
 //    登陆
-    public function login1()
+    public function login()
     {
-        $username = I("post.username");
-        $passwd = I("post.password");
-        if ($username=='admin' && $passwd=='123456'){
-            $user=array('userid'=>1,'user_type'=>2);
-            session("user",$user);
-            $this->ajaxReturn(array("status"=>1,"info"=>'登陆成功'));
-    }else{
-            $this->ajaxReturn(array("status"=>0,"info"=>'账号或密码错误！'));
-        }
         $url=get_refer_url();
         if($url){
             $this->assign('url',$url);
@@ -32,148 +23,46 @@ class PublicController extends Controller
         if (isset($_POST["t_mobile"])) {
             $mobile = I("post.t_mobile");
             $passwd = I("post.t_password");
-            $chk_isremember = I("post.chk_isremember");
             $identify = I('post.identify');
-            if (!checkMobile($mobile)) {
-                echo "<script>alert('请输入正确的手机号码');window.history.go(-1);</script>";
-                exit;
-            } else if ($passwd == "") {
-                echo "<script>alert('请输入密码');window.history.go(-1);</script>";
-                exit;
-            }
             $spasswd = "###" . md5(md5("UewBc27f4YZvbr0e6p" . $passwd));
             $model = new Model();
-            if ($identify=="student") {
-                $sql = "select * from 365class.class_student_users where mobile=ENCODE('$mobile','1!q2@w') and user_pass='$spasswd'";
+            if ($identify==1) {//会员登录
+                $sql = "select * from bookmanage.book_users where mobile=$mobile and user_pass='$spasswd'";
                 $query = $model->query($sql);
                 if ($query != null && count($query) == 1) {
-                    $nickname = $query[0]["user_nicename"];
-                    $realname =$query[0]['user_realname'];
                     session("user_type",$query[0]["user_type"]);
-                    session("nickname", $nickname);
-                    session('realname',$realname);
                     session("userid", $query[0]["id"]);
-                    //记录cookie
-                    $salt = $this->random_str(16);
-                    //第二分身标识
-                    $identifier = md5($salt . md5($query[0]['id'] . $salt));
-                    //永久登录标识
-                    $token = md5(uniqid($spasswd, true));
-                    //永久登录超时时间(1周)
-                    $timeout = time()+3600*24*7;
-                    setcookie('_auth',$identifier.':'.$token,$timeout,"/");
-                    $login_data = array(
-                        'login_id' => $query[0]['id'],
-                        'login_type' => $query[0]['user_type'],
-                        'login_ip' => get_client_ip(0,true),
-                        'login_time' => date("Y-m-d H:i:s"),
-                        'login_token' => $token
-                    );
-                    $r=M('365class.class_login_log')->add($login_data);
                     $where['id'] =$query[0]["id"];
                     $data = array(
                         'last_login_time' => date("Y-m-d H:i:s"),
                         'last_login_ip' => get_client_ip(0,true),
-                        'identifier' =>$identifier,
-                        'token'=>$token,
-                        'timeout'=>$timeout
                     );
-                    $users_model=new Model('365class.class_student_users');
-                    $users_model->where($where)->save($data);
-                    $user_info=$users_model->where($where)->field('user_realname,school_name,class')->find();
-                    $complete=false; //学生信息是否完善标识
-                    foreach($user_info as $v){
-                        if($v==null){$complete=true;}
-                    }
-                    if (isset($_POST["chk_isremember"])) {
-                        setcookie("loginid", $mobile, time() + 864000);//set 10d
-                        cookie('_mobile',$mobile);//用于校内学生判断；
-                        setcookie("password", $passwd, time() + 864000);
-                        setcookie("isremember", "1", time() + 864000);
-                        if($complete){
-                            $personalset=U('Student/personalset');
-                            echo "<script>if(confirm('您的个人信息尚未完善，是否现在完善？')){location.href='$personalset';}</script>";
-                            echo "<script>window.history.go(-2);</script>";
-                            die;
-                        }
-                        if($url){
-                            echo "<script>alert('登录成功!');location.href='$url';</script>";
-                        }
-                        echo "<script>alert('登录成功!');window.history.go(-2);</script>";
-                    } else {
-                        setcookie("loginid", "", time() - 3600);//clean
-                        cookie('_mobile',$mobile);//用于校内学生判断；
-                        setcookie("password", "", time() - 3600);
-                        setcookie("isremember", "", time() - 3600);
-                        if($complete){
-                            $personalset=U('Student/personalset');
-                            echo "<script>if(confirm('您的个人信息尚未完善，是否现在完善？')){location.href='$personalset';}</script>";
-                            echo "<script>window.history.go(-2);</script>";
-                            die;
-                        }
-                        if($url){
-                            echo "<script>alert('登录成功!');location.href='$url';</script>";
-                        }
-                        echo "<script>alert('登录成功!');window.history.go(-2);</script>";
-                    }
+                    $users_model=new Model('bookmanage.book_users');
+                    $rel=$users_model->where($where)->save($data);
+                    $this->ajaxReturn(array('status'=>1,'url'=>$url));
                 } else {
-                    echo "<script>alert('手机号码或密码错误!');window.history.go(-1);</script>";
-                    exit;
+                    $this->ajaxReturn(array('status'=>0));
                 }
-            } elseif ($identify=="teacher") {
-                $sql = "select * from 365class.class_teacher_users where mobile=ENCODE('$mobile','1!q2@w') and user_pass='$spasswd'";
+            } elseif ($identify==2) {//管理员登陆
+                $sql = "select * from bookmanage.book_users where mobile=$mobile and user_pass='$spasswd'";
                 $query = $model->query($sql);
                 if ($query != null && count($query) == 1) {
-                    $nickname = $query[0]["user_nicename"];
-                    $realname = $query[0]["usesr_realname"];
                     session("user_type",$query[0]["user_type"]);
-                    session("nickname", $nickname);
-                    session("realname",$realname);
                     session("userid", $query[0]["id"]);
-                    //记录cookie
-                    $salt = $this->random_str(16);
-                    //第二分身标识
-                    $identifier = md5($salt . md5($query[0]['id'] . $salt));
-                    //永久登录标识
-                    $token = md5(uniqid($passwd, true));
-                    //永久登录超时时间(1周)
-                    $timeout = time()+3600*24*7;
-                    setcookie('_auth',$identifier.':'.$token,$timeout,"/");
-                    $login_data = array(
-                        'login_id' => $query[0]['id'],
-                        'login_type' => $query[0]['user_type'],
-                        'login_ip' => get_client_ip(0,true),
-                        'login_time' => date("Y-m-d H:i:s"),
-                        'login_token' => $token
-                    );
-                    $r=M('365class.class_login_log')->add($login_data);
                     $where['id'] =$query[0]["id"];
                     $data = array(
                         'last_login_time' => date("Y-m-d H:i:s"),
                         'last_login_ip' => get_client_ip(0,true),
-                        'identifier' =>$identifier,
-                        'token'=>$token,
-                        'timeout'=>$timeout,
                     );
-                    $users_model=new Model('365class.class_teacher_users');
+                    $users_model=new Model('bookmanage.book_users');
                     $users_model->where($where)->save($data);
-                    if (isset($_POST["chk_isremember"])) {
-                        setcookie("loginid", $mobile, time() + 864000);//set 10d
-                        setcookie("password", $passwd, time() + 864000);
-                        setcookie("isremember", "1", time() + 864000);
-                        echo "<script>alert('登录成功!');window.history.go(-2);</script>";
-                    } else {
-                        setcookie("loginid", "", time() - 3600);//clean
-                        setcookie("password", "", time() - 3600);
-                        setcookie("isremember", "", time() - 3600);
-                        echo "<script>alert('登录成功!');window.history.go(-2);</script>";
-                    }
+                    $this->ajaxReturn(array('status'=>1,'url'=>$url));
                 } else {
-                    echo "<script>alert('手机号码或密码错误！');window.history.go(-1);</script>";
+                    $this->ajaxReturn(array('status'=>0));
                     exit;
                 }
             }else{
-                echo "<script>alert('请选择身份');window.history.go(-1);</script>";
+                $this->ajaxReturn(array('status'=>-1));
                 exit;
             }
         }
@@ -191,9 +80,9 @@ class PublicController extends Controller
             $u_name = I("post.s_name");
             $u_class = I("post.s_class");
             if($str =='student'){
-                $userMdl = M('365class.class_student_users');
+                $userMdl = M('bookmanage.book_users');
             }else{
-                $userMdl = M('365class.class_teacher_users');
+                $userMdl = M('bookmanage.book_users');
             }
             if (!sp_check_mobile_verify_code($_POST['mobile_verify'])) {
                 $this->error("手机验证码错误！");
@@ -333,9 +222,9 @@ class PublicController extends Controller
             $mobile = I('post.mobile');
             $identify = I('post.identify');
             if ($identify == 'student') {
-                $userMdl = M('365class.class_student_users');
+                $userMdl = M('bookmanage.book_users');
             } elseif ($identify == 'teacher') {
-                $userMdl = M('365class.class_teacher_users');
+                $userMdl = M('bookmanage.book_users');
             }
             $data = array();
             $data['user_pass'] = "###" . md5(md5("UewBc27f4YZvbr0e6p" . $password));

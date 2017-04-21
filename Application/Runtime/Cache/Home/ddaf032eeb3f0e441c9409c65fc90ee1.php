@@ -17,39 +17,43 @@
     <link rel="apple-touch-icon" sizes="76x76" href="touch-icon-iphone-76x76.png" />
     <!-- Retina iPad -->
     <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad-152x152.png" />
-    <link rel="stylesheet" type="text/css" href="/tushuguanli/Public/css/style.css">
+
+    <link rel="stylesheet" type="text/css" href="/bookmanage/Public/css/style.css">
     <script type="application/javascript" src="http://wx.365xuet.com/Public/Weui/js/jquery-2.1.4.js"></script>
     <script type="application/javascript" src="http://wx.365xuet.com/Public/Weui/js/jquery-weui.min.js"></script>
+    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/jquery.cookie.js"></script>
+    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/jquery.form.js"></script>
+    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/commjslib.js"></script>
+    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/layer.m/layer.m.js"></script>
+    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/h5.js"></script>
 </head>
 <body>
-<div class="login"><img src="/tushuguanli/Public/Weixin/images/logo.png"></div>
-<div class="login_1">
+<div class="header" style="text-align: center;z-index:5;">
+    用户登录
+</div>
+<div class="login_1 content " style="margin-top: 56px">
     <form name="form1" id="form1" action="<?php echo U('Public/login');?>" method="post">
         <ul>
 
-            <li class="login_line"><img src="/tushuguanli/Public/Weixin/images/member.png">
-                <input name="t_mobile" id="t_mobile" type="tel" class="login_input" value="" placeholder="手机号码" maxlength="11" style="color:#666;"></li>
-            <li class="login_line"><img src="/tushuguanli/Public/Weixin/images/passwords.png">
-                <input name="t_password" id="t_password" type="password" class="login_input" value="" placeholder="密码" maxlength="20" style="color:#666;"></li>
-            <li>
-                <div class="login_left"><input type="checkbox"  class="login_checkbox"  name="chk_isremember" value="1" id="chk_isremember" checked>
-                    <label for="chk_isremember">记住账号</label></div>
-                <div class="login_right"><a href="zhmm"></a></div>
-            </li>
+            <li class="login_line"><img src="http://wx.365xuet.com/Public/Weixin/images/member.png">
+                <input name="t_mobile" id="t_mobile" type="tel"  class="weui_input" value="" placeholder="手机号码" maxlength="11" style="padding-left: 2vw;width:auto;color:#666;"></li>
+            <li class="login_line"><img src="http://wx.365xuet.com/Public/Weixin/images/passwords.png">
+                <input name="t_password" id="t_password" type="password" class="weui_input" value="" placeholder="密码" maxlength="20" style="padding-left: 2vw;width:auto;color:#666;"></li>
         </ul>
+        <div style="width: 100%;text-align: center;margin-top: 10px">
         <label class="radio-inline">
-            <input type="radio" name="identify" id="inlineRadio1" value="student" checked> 学生
+            <input type="radio" name="identify" id="inlineRadio1" value="1" checked> 会员
         </label>
         <input type="hidden" name="url" id="url" value="<?php echo ($url); ?>" />
         <label class="radio-inline">
-            <input type="radio" name="identify" id="inlineRadio2" value="teacher"> 老师
-        </label>
-        <button class="login_but" type="button" name="btn_login" onclick="login();">登录</button>
-        <button class="login_but" style="background-color:green;margin-top:0px;" type="button" name="jump_wx" onclick="window.location.href='<?php echo U("Public/wx_login");?>'">微信登录</button>
-    </form>
-    <div style="width: 60%;float:right;text-align: right;margin-right: 5px">没有帐号？<a href="<?php echo U('register');?>">立即注册</a></div>
-    <div style="width: 35%;float:left;text-align: left;margin-right: 5px"><a href="<?php echo U('forget');?>">找回密码</a></div>
+            <input type="radio" name="identify" id="inlineRadio2" value="2"> 管理员
+        </label></div>
+
+    </form><button class="login_but" type="button" name="btn_login" onclick="login();">登录</button>
+    <div style="width: 60%;float:right;text-align: right;margin-right: 5px">没有帐号？<a style="color: #337ab7" href="<?php echo U('register');?>">立即注册</a></div>
+    <div style="width: 35%;float:left;text-align: left;margin-right: 5px"><a style="color: #337ab7" href="<?php echo U('forget');?>">找回密码</a></div>
 </div>
+
 </body>
 </html>
 <script>
@@ -79,9 +83,19 @@
             myAlert("请输入规范的密码");
             return false;
         }
-        $("#form1").submit();
-    }
-    function jump_wx(){
-        window.location.href="jd.com";
+        $.showLoading("登录中..");
+        $.post($("#form1").attr("action"),$("#form1").serialize(),function (data) {
+
+            if (data.status==1){
+                $.hideLoading();
+                $.toast('登陆成功!',function () {
+                    window.location.href=data.url;
+                } );
+            }
+            if (data.status==0){
+                $.hideLoading();
+                $.toast('用户名或者密码错误!',"forbidden");
+            }
+        });
     }
 </script>

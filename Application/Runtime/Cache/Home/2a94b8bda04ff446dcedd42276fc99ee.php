@@ -17,9 +17,12 @@
     <link rel="apple-touch-icon" sizes="76x76" href="touch-icon-iphone-76x76.png" />
     <!-- Retina iPad -->
     <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad-152x152.png" />
-    <link rel="stylesheet" type="text/css" href="/tushuguanli/Public/css/style.css">
+
+    <link rel="stylesheet" type="text/css" href="/bookmanage/Public/css/style.css">
     <script type="application/javascript" src="http://wx.365xuet.com/Public/Weui/js/jquery-2.1.4.js"></script>
     <script type="application/javascript" src="http://wx.365xuet.com/Public/Weui/js/jquery-weui.min.js"></script>
+    <script src="http://wx.365xuet.com/Public/Weui/js/jquery.min..js"></script>
+    <script src="http://wx.365xuet.com/Public/Weui/js/jquery-weui.js"></script>
 </head>
 <title>365首页</title>
 <body ontouchstart>
@@ -38,7 +41,7 @@
 </div>
 <div class="book_list">
     <ul>
-        <li>
+        <li onclick="location.href='<?php echo U('bookadmin/index');?>'">
             <div class="book_left">
             <img src="https://img3.doubanio.com/lpic/s29276401.jpg" alt=""></div>
             <div class="book_right">
@@ -103,25 +106,22 @@
 <div class="footer">
     <ul>
         <a href="<?php echo U('Index/index');?>" <?php if($foot == 1): ?>class="on"<?php endif; ?>><li><img src="http://wx.365xuet.com/Public/Weixin/images/footer-1-off.png"><img src="http://wx.365xuet.com/Public/Weixin/images/footer-1-on.png"><br><span>图书查询</span></li></a>
-        <a onclick="check_login()" <?php if($foot == 2): ?>class="on"<?php endif; ?>><li><img src="http://wx.365xuet.com/Public/Weixin/images/footer-2-off.png"><img src="http://wx.365xuet.com/Public/Weixin/images/footer-2-on.png"><br><span>图书录入</span></li></a>
-        <a onclick="login()" <?php if($foot == 3): ?>class="on"<?php endif; ?>><li><img src="http://wx.365xuet.com/Public/Weixin/images/footer-4-off.png"><img src="http://wx.365xuet.com/Public/Weixin/images/footer-4-on.png"><br><span>我的</span></li></a>
+        <a onclick="check_login(1)" <?php if($foot == 2): ?>class="on"<?php endif; ?>><li><img src="http://wx.365xuet.com/Public/Weixin/images/footer-2-off.png"><img src="http://wx.365xuet.com/Public/Weixin/images/footer-2-on.png"><br><span>图书录入</span></li></a>
+        <a onclick="check_login(2)" <?php if($foot == 3): ?>class="on"<?php endif; ?>><li><img src="http://wx.365xuet.com/Public/Weixin/images/footer-4-off.png"><img src="http://wx.365xuet.com/Public/Weixin/images/footer-4-on.png"><br><span>我的</span></li></a>
     </ul>
 </div>
-<script src="http://wx.365xuet.com/Public/Weui/js/jquery.min..js"></script>
-<script src="http://wx.365xuet.com/Public/Weui/js/jquery-weui.js"></script>
 <script>
+    $(function () {
+        check_login()
+    });
     function check_login() {
         $.post("<?php echo U('Public/is_login');?>",{},function (data) {
-            if (data.status==0 ||data.user.user_type==1){
-              $.confirm("请用管理员账号登录","登录",function () {
-                  login();
-              },function () {
-                  $.toast("取消登录!");
-              })
-            }
-            if (data.status==1 && data.user.user_type==2){
-                window.location.href = "<?php echo U('Import/index');?>"
-            }
+                if (data.status==0){
+                    window.location.href = "<?php echo U('Public/login');?>"
+                }
+                if (data.status==1){
+                    window.location.href = "<?php echo U('index/index');?>"
+                }
         },"json");
     }
     function login(){
@@ -136,7 +136,12 @@
                         if (data.status==1){
                             $.hideLoading();
                             $.toast("登录成功!",function () {
-                                window.location.href = "<?php echo U('Import/index');?>";
+                                if (data.user.user_type==2){
+                                    window.location.href = "<?php echo U('Import/index');?>";
+                                }
+                                if (data.user.user_type==1){
+                                    window.location.href = "<?php echo U('Mycenter/index');?>";
+                                }
                             });
                         }else{
                             $.hideLoading();

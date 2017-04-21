@@ -17,7 +17,7 @@
     <link rel="apple-touch-icon" sizes="76x76" href="touch-icon-iphone-76x76.png" />
     <!-- Retina iPad -->
     <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad-152x152.png" />
-    <link rel="stylesheet" type="text/css" href="/tushuguanli/Public/css/style.css">
+    <link rel="stylesheet" type="text/css" href="/bookmanage/Public/css/style.css">
     <script type="application/javascript" src="http://wx.365xuet.com/Public/Weui/js/jquery-2.1.4.js"></script>
     <script type="application/javascript" src="http://wx.365xuet.com/Public/Weui/js/jquery-weui.min.js"></script>
 </head>
@@ -120,7 +120,7 @@
               })
             }
             if (data.status==1 && data.user.user_type==2){
-                window.location.href = "<?php echo U('Import/index');?>"
+//                window.location.href = "<?php echo U('Import/index');?>"
             }
         },"json");
     }
@@ -136,7 +136,12 @@
                         if (data.status==1){
                             $.hideLoading();
                             $.toast("登录成功!",function () {
-                                window.location.href = "<?php echo U('Import/index');?>";
+                                if (data.user.user_type==2){
+                                    window.location.href = "<?php echo U('Import/index');?>";
+                                }
+                                if (data.user.user_type==1){
+                                    window.location.href = "<?php echo U(' /index');?>";
+                                }
                             });
                         }else{
                             $.hideLoading();
