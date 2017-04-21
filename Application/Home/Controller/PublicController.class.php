@@ -44,7 +44,7 @@ class PublicController extends Controller
                     $this->ajaxReturn(array('status'=>0));
                 }
             } elseif ($identify==2) {//管理员登陆
-                $sql = "select * from bookmanage.book_users where mobile=$mobile and user_pass='$spasswd'";
+                $sql = "select * from bookmanage.book_admin_users where mobile=$mobile and user_pass='$spasswd'";
                 $query = $model->query($sql);
                 if ($query != null && count($query) == 1) {
                     session("user_type",$query[0]["user_type"]);
@@ -77,78 +77,43 @@ class PublicController extends Controller
             $mobile = I("post.t_mobile");
             $user_pass = I("post.t_password");
             $str = I("post.identify");
-            $u_name = I("post.s_name");
-            $u_class = I("post.s_class");
-            if($str =='student'){
+            if($str =='1'){
                 $userMdl = M('bookmanage.book_users');
             }else{
-                $userMdl = M('bookmanage.book_users');
+                $userMdl = M('bookmanage.book_admin_users');
             }
-            if (!sp_check_mobile_verify_code($_POST['mobile_verify'])) {
-                $this->error("手机验证码错误！");
-            }
-            $ismobile = $userMdl->where("mobile = ENCODE('" .$mobile  . "', '1!q2@w')")->find();
+            $ismobile = $userMdl->where("mobile =$mobile ")->find();
             if ($ismobile) {
                 $this->error('手机号已存在！');
             } else {
-                if($str =='student'){
-                    $areacode=I('post.country');
-                    $school=I('post.school');
-                    if(is_numeric($school)){
-                        $school=M('class_school_users')->where("id='$school'")->getField('school_name');
-                    }
+                if($str ==1){
                     $find=substr($mobile,3,4);
-                    $encode_mobile='用户'.str_replace($find,'****',$mobile);
-                    $u_class = I('post.grade') . "-" . I('post.g_class') . "-" . I('post.s_class');
+                    $encode_mobile='会员'.str_replace($find,'****',$mobile);
                     $result = $userMdl->add(array(
-                        "mobile" =>array(
-                            'exp',
-                            "ENCODE('" . $mobile . "', '1!q2@w')"),
+                        "mobile" =>$mobile,
                         "user_pass" =>"###".md5(md5("UewBc27f4YZvbr0e6p".$user_pass)),
-                        'user_realname'=>$u_name,
-                        'class'=>$u_class,
                         "create_time"=>date("Y-m-d H:i:s"),
                         'last_login_time' => date("Y-m-d H:i:s"),
                         'create_ip' => get_client_ip(0,true),
                         'last_login_ip' => get_client_ip(0,true),
                         'user_status' => 1,
-                        "user_type"=>1,//1学生，2老师 ，3学校，4机构
-                        'areacode'=>$areacode,
-                        'school_name'=>$school,
-                        'user_nicename'=>$encode_mobile
+                        "user_type"=>1,//1会员，2管理员
+                        'user_name'=>$encode_mobile
                     ));
                     if($result&&$mobile){
-                        //记录cookie
-                        $salt = $this->random_str(16);
-                        //第二分身标识
-                        $identifier = md5($salt . md5($result . $salt));
-                        //永久登录标识
-                        $token = md5(uniqid($user_pass, true));
-                        //永久登录超时时间(1周)
-                        $timeout = time()+3600*24*7;
-                        setcookie('_auth',$identifier.':'.$token,$timeout,"/");
                         $where['id'] =$result;
                         $data = array(
                             'last_login_time' => date("Y-m-d H:i:s"),
                             'last_login_ip' => get_client_ip(0,true),
-                            'identifier' =>$identifier,
-                            'token'=>$token,
-                            'timeout'=>$timeout,
                         );
                         $userMdl->where($where)->save($data);
                         session("user_type",1);
-                        session("nickname", '匿名');
-                        session("realname",$u_name);
                         session("userid", $result);
-                        cookie('_mobile',$mobile);
-                        $this->show("<script>alert('注册成功');location.href='{:U(\'Index/index\')}';</script>");
+                       $this->ajaxReturn(array('status'=>1));
                     }
                 }else{
-                    $areacode=I('post.country');
-                    $school=I('post.school');
-                    if(is_numeric($school)){
-                        $school=M('class_school_users')->where("id='$school'")->getField('school_name');
-                    }
+                    $find=substr($mobile,3,4);
+                    $encode_mobile='管理员'.str_replace($find,'****',$mobile);
                     $result = $userMdl->add(array(
                         "mobile" =>array(
                             'exp',
@@ -157,48 +122,26 @@ class PublicController extends Controller
                         "create_time"=>date("Y-m-d H:i:s"),
                         'last_login_time' => date("Y-m-d H:i:s"),
                         'create_ip' => get_client_ip(0,true),
-			'user_realname'=>$u_name,
                         'last_login_ip' => get_client_ip(0,true),
                         'user_status' => 1,
-                        "user_type"=>2,//1学生，2老师 ，3学校，4机构
-                        'areacode'=>$areacode,
-                        'school_name'=>$school
+                        "user_type"=>2,//1会员，2管理员
+                        'user_name'=>$encode_mobile
                     ));
                     if($result&&$mobile){
-                        //记录cookie
-                        $salt = $this->random_str(16);
-                        //第二分身标识
-                        $identifier = md5($salt . md5($result . $salt));
-                        //永久登录标识
-                        $token = md5(uniqid($user_pass, true));
-                        //永久登录超时时间(1周)
-                        $timeout = time()+3600*24*7;
-                        setcookie('_auth',$identifier.':'.$token,$timeout,"/");
                         $where['id'] =$result;
                         $data = array(
                             'last_login_time' => date("Y-m-d H:i:s"),
                             'last_login_ip' => get_client_ip(0,true),
-                            'identifier' =>$identifier,
-                            'token'=>$token,
-                            'timeout'=>$timeout,
                         );
                         $userMdl->where($where)->save($data);
                         session("user_type",2);
                         session("nickname", '匿名');
-                        session("realname",$u_name);
                         session("userid", $result);
-                        cookie('_mobile',$mobile);
-                        $this->show("<script>alert('注册成功');location.href='{:U(\'Index/index\')}';</script>");
+                        $this->ajaxReturn(array('status'=>1));
                     }
                 }
             }
         }
-        $province_list=M('class_region')->where("level_id = 0")->select();
-        $city_list=M('class_region')->where("father_id=36")->select();
-        $country_list=M('class_region')->where("father_id=3601")->select();
-        $this->assign('province_list',$province_list);
-        $this->assign('city_list',$city_list);
-        $this->assign('country_list',$country_list);
         $this->display();
     }
     //忘记密码
