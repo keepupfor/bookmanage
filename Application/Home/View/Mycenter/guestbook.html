@@ -1,0 +1,111 @@
+<include file="Public:script-load-page"/>
+<title>图书借阅系统</title>
+<body ontouchstart>
+<div class="content">
+<div class="header" style="z-index:5;">
+    <a href="{:U('mycenter/index')}"><div class="left_t header_back">
+
+    </div> </a>
+    <div class="middle_t site_20">留言反馈</div>
+    <div class="right_t">
+        <span class="rigth"></span>
+    </div>
+</div>
+    <div class="person_center_top" style="background: white">
+        <form action="{:U('public/ajax_request')}" method="post" name="form1" id="form1">
+            <div class="weui_cells_title">您的留言与建议，是我们成长的动力。</div>
+            <div class="weui_cells weui_cells_form">
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label class="weui_label">标题</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input class="weui_input" type="text" name="title" placeholder="请输入标题">
+                    </div>
+                </div>
+                <div class="weui_cell">
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <textarea class="weui_textarea" name="msg" placeholder="请输入留言" rows="3"></textarea>
+                    </div>
+                </div>
+                <input type="hidden" name="full_name" value="{$user_name}">
+                <input type="hidden" name="mobile" value="{$mobile}">
+                <div class="weui_btn_area">
+                    <a class="weui_btn weui_btn_primary" href="javascript:" id="showTooltips">提交</a>
+                </div>
+            </div>
+        </form>
+        <if condition="!empty($gb_list)">
+        <div class="weui_panel">
+            <div class="weui_panel_hd">历史留言</div>
+            <div class="weui_panel_bd">
+                <volist name="gb_list" id="vo">
+                <div class="weui_media_box weui_media_text">
+                    <h4 class="weui_media_title">{$vo.title}</h4>
+                    <p class="weui_media_desc">{$vo.msg}</p>
+                    <ul class="weui_media_info">
+                        <li class="weui_media_info_meta">{$vo.addtime}</li>
+                    </ul>
+                </div>
+                </volist>
+            </div>
+        </div>
+        </if>
+    </div>
+</div>
+<script>
+    $("#showTooltips").click(function() {
+        var title = $('input[name="title"]').val();
+        var msg = $('textarea[name="msg"]').val();
+        if (title=='' ||!title||title==null ) {
+            $.toptip('请输入标题');
+            return false;
+        }
+        if (msg=='' ||!msg||msg==null ) {
+            $.toptip('请输入留言内容');
+            return false;
+        }
+        $("#form1").ajaxSubmit({
+            type:"post",
+            dataType:"json",
+            data:{method:"add",table_name:"guestbook"},
+            beforeSend:function () {
+                $.showLoading("保存中")
+            },
+            success:function (data) {
+                if (data.status==1){
+                    $.hideLoading();
+                    $.toast("提交成功",function () {
+                        window.location.reload();
+                    });
+                }
+                else{
+                    $.hideLoading();
+                    $.toast("提交失败","forbidden");
+                }
+            },
+          error:function () {
+              $.hideLoading();
+              $.toptip('系统错误！');
+          }
+        });
+//        $.ajax({
+//            type:"POST",
+//            url:$("#form1").attr("action"),
+//            data:$("#form1").serialize(),
+//            dataType:"json",
+//            beforeSend:function () {
+//           $.showLoading("保存中")
+//        },
+//            success:function (data) {
+//                $.hideLoading();
+//                if (data.status==1)
+//                $.toptip('保存成功', 'success');
+//            },
+//            error:function () {
+//                $.hideLoading();
+//                $.toptip('系统错误！');
+//            }
+//        });
+    });
+</script>
+</body>
+</html>

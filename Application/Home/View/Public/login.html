@@ -61,7 +61,7 @@
             if (data.status==1){
                 $.hideLoading();
                 $.toast('登陆成功!',function () {
-                    window.location.href=data.url;
+                    window.location.href="{:U('index/index')}";
                 } );
             }
             if (data.status==0){

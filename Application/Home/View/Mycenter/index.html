@@ -1,0 +1,96 @@
+<include file="Public:script-load-page"/>
+<title>图书借阅系统</title>
+<body ontouchstart>
+
+
+<div class="header" style="z-index:5;text-align: center">
+  个人中心
+    </div>
+</div>
+<div class="person_center_top">
+    <ul>
+        <li><img src="http://wx.365xuet.com/Public/Weixin/images/index-mid-1.png" alt=""></li>
+        <li>{$user_name}</li>
+        <if condition="$user_type eq 1">
+        <li>积分：<b>{$corn}</b></li></if>
+    </ul>
+</div>
+<div class="bd">
+    <div class="weui_cells weui_cells_access">
+
+        <a class="weui_cell" href="{:('setting')}">
+            <div class="weui_cell_hd"><img src="__PUBLIC__/images/personal.png" alt="" width="20"></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>个人设置</p>
+            </div>
+            <div class="weui_cell_ft"> </div>
+        </a>
+        <a class="weui_cell" href="{:('change_pwd')}">
+            <div class="weui_cell_hd"><img src="__PUBLIC__/images/passwordx.png" alt="" width="20"></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>修改密码</p>
+            </div>
+            <div class="weui_cell_ft"> </div>
+        </a>
+    </div>
+<if condition="$user_type eq 1">
+    <div class="weui_cells_title"> </div>
+    <div class="weui_cells weui_cells_access">
+
+        <a class="weui_cell" href="{:('favorites')}">
+            <div class="weui_cell_hd"><img src="__PUBLIC__/images/question.png" alt="" width="20"></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>我的收藏</p>
+            </div>
+            <div class="weui_cell_ft"> </div>
+        </a>
+        <a class="weui_cell" href="{:('appointment')}">
+            <div class="weui_cell_hd"><img src="http://wx.365xuet.com/Public/Weixin/images/index-mid-4.png" alt="" width="20"></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>我的预约</p>
+            </div>
+            <div class="weui_cell_ft"> </div>
+        </a>
+        <a class="weui_cell" href="{:('order')}">
+            <div class="weui_cell_hd"><img src="http://wx.365xuet.com/Public/Weixin/images/index-mid-3.png" alt="" width="20"></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>借阅记录</p>
+            </div>
+            <div class="weui_cell_ft"> </div>
+        </a>
+    </div>
+
+    <div class="weui_cells_title"></div>
+    <div class="weui_cells weui_cells_access">
+
+        <a class="weui_cell" href="{:('comment')}">
+            <div class="weui_cell_hd"><img src="__PUBLIC__/images/comment.png" alt="" width="20"></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>我的书评</p>
+            </div>
+            <div class="weui_cell_ft"> </div>
+        </a>
+        <a class="weui_cell" href="{:('corn')}">
+            <div class="weui_cell_hd"><img src="__PUBLIC__/images/me.png" alt="" width="20"></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>我的积分</p>
+            </div>
+            <div class="weui_cell_ft"> </div>
+        </a>
+        <a class="weui_cell" href="{:('guestbook')}">
+            <div class="weui_cell_hd"><img src="__PUBLIC__/images/contment.png" alt="" width="20"></div>
+            <div class="weui_cell_bd weui_cell_primary">
+                <p>留言反馈</p>
+            </div>
+            <div class="weui_cell_ft"> </div>
+        </a>
+    </div>
+</if>
+</div>
+<div class="weui_btn_area">
+    <a href="{:U('public/logout')}" class="weui_btn weui_btn_warn">注销帐号</a>
+</div>
+
+<include file="Public:footer" />
+</body>
+</html>

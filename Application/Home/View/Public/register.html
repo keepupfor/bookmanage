@@ -9,21 +9,24 @@
 	<form name="form1" id="form1" method="post">
 		<ul>
 			<!--地区-->
-			<li class="login_line"><img src="__PUBLIC__/Weixin/images/member.png">
-				<input name="t_mobile" id="t_mobile" type="tel" class="login_input" value="" placeholder="手机号码" maxlength="11" style="color:#666;" /></li>
+			<li class="login_line"><img src="http://wx.365xuet.com/Public/Weixin/images/member.png">
+				<input name="t_mobile" id="t_mobile" type="tel" class="weui_input" value="" placeholder="手机号码" maxlength="11" style="padding-left: 2vw;width:auto;color:#666;" /></li>
 
-			<li class="login_line"><img src="__PUBLIC__/Weixin/images/passwords.png">
-				<input name="t_password" id="t_password" type="password" class="login_input" value="" placeholder="密码" maxlength="20" style="color:#666;"></li>
-			<li class="login_line"><img src="__PUBLIC__/Weixin/images/passwords.png">
-				<input name="t_password" id="re_password" type="password" class="login_input" value="" placeholder="确认密码" maxlength="20" style="color:#666;"></li>
+			<li class="login_line"><img src="http://wx.365xuet.com/Public/Weixin/images/passwords.png">
+				<input name="t_password" id="t_password" type="password" class="weui_input" value="" placeholder="密码" maxlength="20" style="padding-left: 2vw;width:auto;color:#666;"></li>
+			<li class="login_line"><img src="http://wx.365xuet.com/Public/Weixin/images/passwords.png">
+				<input name="t_password" id="re_password" type="password" class="weui_input" value="" placeholder="确认密码" maxlength="20" style="padding-left: 2vw;width:auto;color:#666;"></li>
 		</ul>
+		<div style="width: 100%;text-align: center;margin-top: 10px">
 		<label class="radio-inline">
-			<input type="radio" name="identify" id="inlineRadio1" value="student" checked> 会员
+			<input type="hidden" name="identify" id="inlineRadio1" value="1" > 
 		</label>
-		<label class="radio-inline">
-			<input type="radio" name="identify" id="inlineRadio2" value="teacher"> 管理员
-		</label>
+		<!--<label class="radio-inline">-->
+			<!--<input type="radio" name="identify" id="inlineRadio2" value="2"> 管理员-->
+		<!--</label>-->
+			</div>
 		<button class="login_but" type="button" name="btn_login" onclick="register();">注册</button>
+		<div style="width: 60%;float:right;text-align: right;margin-right: 5px">已有账号？<a style="color: #337ab7" href="{:U('login')}">立即登录</a></div>
 	</form>
 </div>
 </body>
@@ -34,7 +37,6 @@
 		var mobile=$("#t_mobile").val();
 		var password=$("#t_password").val();
 		var re_password=$("#re_password").val();
-		var s_name=$("#s_name").val();
 		if(!isMobile(mobile))
 		{
 			myAlert("请输入正确的手机号码");
@@ -44,30 +46,25 @@
 			myAlert("两次密码输入不一致");
 			return false;
 		}
-		else if(password.length<4||password.length>20)
-		{
-			myAlert("请输入规范的密码");
-			return false;
-		}else if(isNaN($("#country").val())){
-			myAlert("请选择地址");
-			return false;
-		}else if($("#school").val() ==null || $("#school").val()==''){
-			myAlert("请输入学校名称");
-			return false;
-		}else if($("#grade").val()==0 || $("#grade").val()==null ||$("#greade").val()==''){
-			myAlert("请选择学龄段");
-			return false;
-		}else if($("#g_class").val()==0|| $("#g_class").val()==null ||$("#g_class").val()==''){
-			myAlert("请选择年级");
-			return false;
-		}else if($("#s_class").val()==null ||$("#s_class").val()=='') {
-			myAlert("请输入班级");
-			return false;
-		}
-			if(!s_name){
-			myAlert("请输入姓名");
-			return false;
-		}
-		$("#form1").submit();
+		$.showLoading("注册中..");
+		$.post($("#form1").attr("action"),$("#form1").serialize(),function (data) {
+			if (data.status==1){
+				$.hideLoading();
+				$.toast('注册成功!',function () {
+					window.location.href="{:U('home/index/index')}";
+				} );
+			}
+			else if (data.status==0){
+				$.hideLoading();
+				$.toast(data.info,"forbidden",function () {
+					window.location.href="{:U('home/index/index')}";
+				});
+			}else{
+				setTimeout(function () {
+					$.hideLoading();
+				},3000);
+			}
+
+		});
 	}
 </script>

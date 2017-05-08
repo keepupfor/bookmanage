@@ -1,14 +1,14 @@
 <include file="Public:script-load-page" />
 <body>
-<div class="login"><img src="__PUBLIC__/Weixin/images/logo.png"></div>
+<div class="login"></div>
 <div class="login_1">
     <form name="form1" id="form1" method="post" action="{:U('Public/reset')}">
         <ul>
-            <li class="login_line"><img src="__PUBLIC__/Weixin/images/passwords.png">
+            <li class="login_line"><img src="http://wx.365xuet.com/Public/Weixin/images/passwords.png">
                 <input name="t_password" id="t_password" type="password" class="login_input" value="" placeholder="请重新输入密码" maxlength="20" style="color:#666;"></li>
-            <li class="login_line"><img src="__PUBLIC__/Weixin/images/passwords.png">
+            <li class="login_line"><img src="http://wx.365xuet.com/Public/Weixin/images/passwords.png">
                 <input name="t_password" id="re_password" type="password" class="login_input" value="" placeholder="确认密码" maxlength="20" style="color:#666;"></li>
-            <input type="hidden" id="identify" name="identify" value="{$identify}" />
+            <input type="hidden" id="user_type" name="user_type" value="{$user_type}" />
             <input type="hidden" id="mobile" name="mobile" value="{$mobile}" />
         </ul>
         <button id="reset" class="login_but" type="button" name="btn_login">重置密码</button>
@@ -20,9 +20,9 @@
         $("#reset").bind("click",function(){
             var password=$("#t_password").val();
             var re_password=$("#re_password").val();
-            var identify=$("#identify").val();
+            var user_type=$("#user_type").val();
             var mobile=$("#mobile").val();
-//            alert(mobile+identify+password);
+//            alert(mobile+user_type+password);
             if (password!=re_password){
                 myAlert("两次密码输入不一致");
                 return false;
@@ -36,22 +36,21 @@
                 type:"POST",
                 dataType:"json",
                 data:{password:password,
-                    identify:identify,
+                    user_type:user_type,
                     mobile:mobile
                 },
                 success:function(data){
                     switch(data){
                         case 0:
-                            alert('修改失败');
-                            window.location.href="{:U('Public/login')}";
+                            $.toast('修改失败',"forbidden",function () {
+                                window.location.href="{:U('Public/login')}";
+                            });
+
                             break;
                         case 1:
-                            alert('修改成功');
-                            window.location.href="{:U('Public/login')}";
-                            break;
-                        case 2:
-                            alert('手机号未注册');
-                            window.location.href="{:U('Public/login')}";
+                            $.toast('修改成功',function () {
+                                window.location.href="{:U('Public/login')}";
+                            });
                             break;
                     }
                 }

@@ -1,0 +1,40 @@
+<include file="Public:script-load-page"/>
+    <title>图书订阅管理系统</title>
+<body ontouchstart style="background: white">
+
+<div class="header" style="z-index:5;">
+    <a href="{:U('mycenter/index')}"><div class="left_t header_back">
+
+    </div> </a>
+    <div class="middle_t site_20">我的预约</div>
+    <div class="right_t">
+        <span class="rigth" id="add_info">
+        </span>
+    </div>
+</div>
+<div class="content_normal">
+
+            <div class="weui_panel weui_panel_access">
+                <div class="weui_panel_bd">
+                    <volist name="ap_list" id="vo">
+                    <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg" onclick="go_detail('{$vo[book_detail][ISBN]}')">
+
+                        <div class="weui_media_hd">
+                            <img class="weui_media_appmsg_thumb" src="{$vo[book_detail][book_pic]}" alt="">
+                        </div>
+                        <div class="weui_media_bd " >
+                            <h4 class="weui_media_title">{$vo[book_detail][book_name]}</h4>
+                            <p class="weui_media_desc">{$vo[book_detail][book_content]}</p>
+                            <p class="weui_media_desc" style="color: orange">预约时间：{$vo.addtime}</p>
+                        </div>
+                    </a>
+                    </volist>
+                </div>
+            </div>
+    </div>
+
+</body>
+<script>
+
+</script>
+</html>

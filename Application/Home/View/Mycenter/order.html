@@ -1,0 +1,101 @@
+<include file="Public:script-load-page"/>
+    <title>图书订阅管理系统</title>
+<body ontouchstart style="background: white">
+
+<div class="header" style="z-index:5;">
+    <a href="{:U('mycenter/index')}"><div class="left_t header_back">
+
+    </div> </a>
+    <div class="middle_t site_20">我的借阅</div>
+    <div class="right_t">
+        <span class="rigth" id="add_info">
+        </span>
+    </div>
+</div>
+<div class="content_normal">
+    <div class="weui_navbar" style="position: fixed;top: 50px;">
+        <div class="weui_navbar_item <if condition='$type eq 1'>weui_bar_item_on</if> " onclick="location.href='{:U('home/mycenter/order/type/1')}'">
+           借阅中
+        </div>
+        <div class="weui_navbar_item  <if condition='$type eq 2'>weui_bar_item_on</if>" onclick="location.href='{:U('home/mycenter/order/type/2')}'">
+            已借阅
+        </div>
+    </div>
+</div>
+<div class="book_list" style="position: absolute;">
+            <div class="weui_panel weui_panel_access" >
+                <div class="weui_panel_bd">
+                    <volist name="or_list" id="vo">
+                    <a href="javascript:void(0);" class="weui_media_box weui_media_appmsg" >
+
+                        <div class="weui_media_hd" style="height: 21vh" onclick="go_detail('{$vo[book_detail][ISBN]}')">
+                            <img class="weui_media_appmsg_thumb" src="{$vo[book_detail][book_pic]}" alt="">
+                        </div>
+                        <div class="weui_media_bd " >
+                            <h4 class="weui_media_title" onclick="go_detail('{$vo[book_detail][ISBN]}')">{$vo[book_detail][book_name]}</h4>
+                            <p class="weui_media_desc" onclick="go_detail('{$vo[book_detail][ISBN]}')">{$vo[book_detail][book_content]}</p>
+                            <p class="weui_media_desc" style="color: orange">申请时间：{$vo.addtime}</p>
+                            <if condition="$type eq 1">
+                                <p class="weui_media_desc" style="color: red">应还时间：{$vo.back_time}</p>
+                            </if>
+                             <if condition="$type eq 2">
+                                  <p class="weui_media_desc" style="color: red">还书时间：{$vo.back_real_time}</p>
+                                 <span  onclick="javascript:comment_book('{$vo.book_id}');" class="weui_btn weui_btn_mini weui_btn_default">
+                                     评论
+                                 </span>
+                                </if>
+
+                        </div>
+                    </a>
+                    </volist>
+                </div>
+            </div>
+</div>
+<div id="full" class='weui-popup-container'>
+    <div class="weui-popup-overlay"></div>
+    <div class="weui-popup-modal">
+        <form  name="form1" id="form1" enctype="multipart/form-data" action="{:U('public/ajax_request')}" method="post">
+            <article class="weui_article">
+                <div class="weui_cell_hd"><label class="weui_label">评论内容</label></div>
+                <div class="weui_cells weui_cells_form">
+                    <div class="weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <textarea class="weui_textarea" placeholder="请输入评论内容" name="content" rows="6">{$info['content']}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="uid" value="{$id}">
+                <input type="hidden" name="table_name" value="comments">
+                <input type="hidden" name="post_id" id="post_id">
+                <section>
+                    <a href="javascript:;" class="weui_btn weui_btn_primary" id="save_info">确定提交</a>
+                    <a href="javascript:;" class="weui_btn weui_btn_plain_primary close-popup">关闭</a>
+                </section>
+
+            </article>
+        </form>
+    </div>
+</div>
+</body>
+<script>
+    $(document).on("click","#save_info",function () {
+                $("#form1").ajaxSubmit({
+                    type:"post",
+                    dataType:"json",
+                    data:{method:"add"},
+                    success:function (data) {
+                        if (data.status==1){
+                            $.toast("评论成功",function () {
+                                location.href=location.href;
+                            });
+                        }
+                    }
+                });
+            });
+function comment_book(book_id) {
+    $("#post_id").val(book_id);
+    $("#full").addClass("weui-popup-container-visible");
+    $("#full").show();
+}
+</script>
+</html>

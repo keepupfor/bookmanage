@@ -1,0 +1,96 @@
+<include file="Public:script-load-page"/>
+<title>图书借阅系统</title>
+<body ontouchstart>
+<div class="header" style="z-index:5;">
+    <a href="{:U('Libraryadmin/index')}"><div class="left_t header_back">
+
+    </div> </a>
+    <div class="middle_t site_20">图书管理</div>
+    <div class="right_t">
+        <span class="rigth" id="add_info">
+            添加
+        </span>
+    </div>
+</div>
+<div class="content_normal">
+    <div class="weui_navbar" style="position: fixed;top: 50px;">
+        <div class="weui_navbar_item <if condition='$status eq 1'>weui_bar_item_on</if> " onclick="location.href='{:U('home/libraryadmin/book_manage/status/1')}'">
+           已上架
+        </div>
+       <div class="weui_navbar_item  <if condition='$status eq 2'>weui_bar_item_on</if>" onclick="location.href='{:U('home/libraryadmin/book_manage/status/2')}'">
+            未上架
+        </div>
+    </div>
+
+</div>
+<div class="book_list" style="position: absolute;">
+    <div class="weui_panel weui_panel_access">
+        <div class="weui_panel_bd">
+            <volist name="book_list" id="vo">
+            <a  href="javascript:;" onclick="go_detail('{$vo.ISBN}')" class="weui_media_box weui_media_appmsg">
+                <div class="weui_media_hd " style="width: 25vw;height: 21vh">
+                    <img class="book_listimg" src="{$vo.book_pic}" alt="">
+                </div>
+                <div class="weui_media_bd">
+                    <b class="weui_media_desc rigthheight">书名:{$vo.book_name}</b>
+                    <p class="weui_media_desc rigthheight">作者: {$vo.book_author}</p>
+                    <p class="weui_media_desc rigthheight">出版社:{$vo.book_publisher}</p>
+                    <p class="weui_media_desc rigthheight">出版日期:{$vo.book_pubdate}</p>
+                    <p class="weui_media_desc rigthheight">定价:{$vo.book_price}</p>
+                    <p class="weui_media_desc rigthheight">库存:{$vo.book_num}</p>
+                </div>
+            </a>
+</volist>
+        </div>
+    </div>
+</div>
+<div id="full" class='weui-popup-container'>
+    <div class="weui-popup-overlay"></div>
+    <div class="weui-popup-modal">
+        <div class="weui_search_bar" id="search_bar" >
+            <form class="weui_search_outer" method="post" id="isbnform" action="{:U('home/libraryadmin/set_qrcode')}">
+                <div class="weui_search_inner">
+                    <i class="weui_icon_search"></i>
+                    <input type="search" name="isbn" class="weui_search_input" id="search_input" placeholder="输入图书ISBN码" required/>
+                    <a href="javascript:" class="weui_icon_clear" id="search_clear"></a>
+                </div>
+                <label for="search_input" class="weui_search_text" id="search_text">
+                    <i class="weui_icon_search"></i>
+                    <span>输入图书ISBN码</span>
+                </label>
+            </form>
+            <a href="javascript:" class="weui_search_cancel" id="search_cancel">取消</a>
+        </div>
+        <article class="weui_article">
+        <section>
+            <div id="qrcode" style="width: 100%;text-align: center"></div>
+            <img src="" alt="">
+            <a href="javascript:;" class="weui_btn weui_btn_primary" id="save_info">生成二维码</a>
+            <a href="javascript:;" class="weui_btn weui_btn_plain_primary close-popup">关闭</a>
+        </section>
+            </article>
+    </div>
+
+</div>
+</body>
+<script>
+    function go_detail(isbn) {
+      window.location.href=" {:U('home/Bookadmin/index/isbn/"+isbn+"')}"
+    }
+    $(document).on("click", "#add_info", function() {
+        $("#full").addClass("weui-popup-container-visible");
+        $("#full").show();
+    }).on("open", ".weui-popup-modal", function() {
+    }).on("close", ".weui-popup-modal", function() {
+    }).on("click","#save_info",function () {
+        $("#isbnform").ajaxSubmit({
+            type:"post",
+            dataType:"json",
+            success:function (data) {
+                var html='<img src="data:image/png;base64,'+data.base+'">';
+                $("#qrcode").html(html);
+            }
+        });
+    });
+</script>
+</html>

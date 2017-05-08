@@ -1,0 +1,54 @@
+<include file="Public:script-load-page"/>
+    <title>图书订阅管理系统</title>
+<body ontouchstart style="background: white">
+
+<div class="header" style="z-index:5;">
+    <a href="{:U('Libraryadmin/index')}"><div class="left_t header_back">
+
+    </div> </a>
+    <div class="middle_t site_20">{$title}</div>
+    <div class="right_t">
+        <span class="rigth" id="add_info">
+        </span>
+    </div>
+</div>
+<div class="content_normal">
+
+    <div class="weui_panel">
+        <!--<div class="weui_panel_hd">{$title}</div>-->
+        <volist name="orders" id="vo">
+        <div class="weui_panel_bd">
+            <div class="weui_media_box weui_media_text">
+                <h4 class="weui_media_title" onclick="to_detail('{$vo.book_id}')">书名：{$vo['book_detail']['book_name']}</h4>
+                <p class="weui_media_desc" onclick="to_detail('{$vo.book_id}')">{$vo['book_detail']['book_content']}</p>
+                <ul class="weui_media_info">
+                    <li class="weui_media_info_meta">申请人：{$vo.username}</li>
+                    <li class="weui_media_info_meta">申请时间：{$vo.addtime}</li>
+                </ul>
+                <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_primary" onclick="agree('{$vo.id}')" >审批</a>
+            </div>
+        </div>
+        </volist>
+    </div>
+</div>
+
+</body>
+<script>
+    function  to_detail(id) {
+        window.location.href="{:U('home/libraryadmin/library_information_detail/id/"+id+"')}";
+    }
+    function agree(id) {
+        $.post("{:U('Home/Libraryadmin/reader_manage')}",{id:id},function (data) {
+            if (data.status==1){
+                $.toast("审批成功",function () {
+                    location.href=location.href;
+                });
+            }else{
+                $.toast("审批失败","forbidden",function () {
+//                    location.href=location.href;
+                });
+            }
+        })
+    }
+</script>
+</html>

@@ -1,0 +1,68 @@
+<include file="Public:script-load-page"/>
+    <title>图书订阅管理系统</title>
+<body ontouchstart style="background: white">
+
+<div class="header" style="z-index:5;">
+    <a href="{:U('Libraryadmin/index')}"><div class="left_t header_back">
+
+    </div> </a>
+    <div class="middle_t site_20">{$title}</div>
+    <div class="right_t">
+        <span class="rigth" id="add_info">
+        </span>
+    </div>
+</div>
+<div class="content_normal">
+
+    <div class="weui_panel">
+        <!--<div class="weui_panel_hd">{$title}</div>-->
+        <volist name="comments" id="vo">
+        <div class="weui_panel_bd">
+            <div class="weui_media_box weui_media_text">
+                <h4 class="weui_media_title" onclick="to_detail('{$vo.content}')">书名：{$vo['book_detail']['book_name']}</h4>
+                <p class="weui_media_desc" onclick="to_detail('{$vo.content}')">{$vo['content']}</p>
+                <ul class="weui_media_info">
+                    <li class="weui_media_info_meta">评论用户：{$vo.username}</li>
+                    <li class="weui_media_info_meta">评论时间：{$vo.addtime}</li>
+                </ul>
+                <a href="javascript:;" class="weui_btn weui_btn_mini weui_btn_primary" onclick="delete_comment('{$vo.id}')" >删除</a>
+            </div>
+        </div>
+        </volist>
+    </div>
+</div>
+<div id="full" class='weui-popup-container'>
+    <div class="weui-popup-overlay"></div>
+    <div class="weui-popup-modal">
+            <article class="weui_article">
+                <div class="weui_cell_hd"><p>评论内容：</p><label class="weui_cell_hd" id="content"></label></div>
+                <section style="margin-top: 50vh">
+                    <a href="javascript:;" class="weui_btn weui_btn_plain_primary close-popup">关闭</a>
+                </section>
+
+            </article>
+    </div>
+</div>
+</body>
+<script>
+    function  to_detail(content) {
+        $("#content").html(content);
+        $("#full").addClass("weui-popup-container-visible");
+        $("#full").show();
+    }
+    function delete_comment(id) {
+        $.post("{:U('public/ajax_request')}",{id:id,method:"save",table_name:"comments",status:2},function (data) {
+            if (data.status==1){
+                $.toast("删除成功",function () {
+                    location.href=location.href;
+                });
+            }
+            if (data.status==0){
+                $.toast("删除失败","forbidden",function () {
+//                    location.href=location.href;
+                });
+            }
+        })
+    }
+</script>
+</html>

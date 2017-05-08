@@ -1,99 +1,102 @@
 <include file="Public:script-load-page"/>
-<title>365首页</title>
+<title>图书借阅系统</title>
 <body ontouchstart>
 <div class="top">
     <div class="h-p">
         <div class="left-t">
             <div class="right-t-div">
+                <input type="text" id="search" style="border: 0;height: 85%" placeholder="点击此处搜索" value="{$name}">
                 <span class="right-t-l">
                     <img src="http://wx.365xuet.com/Public/Weixin/images/search-icon.png"/>
                 </span>
-                <span class="right-t-2">请输入图书名称</span>
             </div>
         </div>
-        <div class="right-t"><a href="" class="weui_btn weui_btn_mini weui_btn_primary">查询</a></div>
+        <div class="right-t"><a href="javascript:search_book();" class="weui_btn weui_btn_mini weui_btn_primary">查询</a>
+        </div>
     </div>
 </div>
+
 <div class="book_list">
-    <ul>
-        <li onclick="location.href='{:U('bookadmin/index')}'">
-            <div class="book_left">
-            <img src="https://img3.doubanio.com/lpic/s29276401.jpg" alt=""></div>
-            <div class="book_right">
-                <span>书名:好好学习</span>
-                <span >作者: 成甲</span>
-                <span >出版社:中信出版社</span>
-                <span >定价:42.00</span>
-                <span >ISBN:9787508671581</span>
+    <div class="weui_panel weui_panel_access">
+        <div class="weui_panel_hd"></div>
+        <if condition="!empty($book_list)">
+            <div class="weui_panel_bd">
+                <volist name="book_list" id="vo">
+                    <a href="javascript:to_detail('{$vo.ISBN}')" class="weui_media_box weui_media_appmsg">
 
-            </div>
-        </li>
-        <li>
-            <div class="book_left">
-                <img src="https://img3.doubanio.com/lpic/s29276401.jpg" alt=""></div>
-            <div class="book_right">
-                <span>书名:好好学习</span>
-                <span >作者: 成甲</span>
-                <span >出版社:中信出版社</span>
-                <span >定价:42.00</span>
-                <span >ISBN:9787508671581</span>
 
+                        <div class="weui_media_hd " style="width: 25vw;height: 21vh">
+                            <img class="book_listimg" src="{$vo.book_pic}" alt="">
+                        </div>
+                        <div class="weui_media_bd">
+                            <h4 class="weui_media_title">书名:{$vo.book_name}</h4>
+                            <p class="weui_media_desc rigthheight">作者: {$vo.book_author}</p>
+                            <p class="weui_media_desc rigthheight">出版社:{$vo.book_publisher}</p>
+                            <p class="weui_media_desc rigthheight">定价:{$vo.book_price}</p>
+                            <p class="weui_media_desc rigthheight">库存:{$vo.book_num}</p>
+                        </div>
+                    </a>
+                </volist>
             </div>
-        </li>
-        <li>
-            <div class="book_left">
-                <img src="https://img3.doubanio.com/lpic/s29276401.jpg" alt=""></div>
-            <div class="book_right">
-                <span>书名:好好学习</span>
-                <span >作者: 成甲</span>
-                <span >出版社:中信出版社</span>
-                <span >定价:42.00</span>
-                <span >ISBN:9787508671581</span>
-
-            </div>
-        </li>
-        <li>
-            <div class="book_left">
-                <img src="https://img3.doubanio.com/lpic/s29276401.jpg" alt=""></div>
-            <div class="book_right">
-                <span>书名:好好学习</span>
-                <span >作者: 成甲</span>
-                <span >出版社:中信出版社</span>
-                <span >定价:42.00</span>
-                <span >ISBN:9787508671581</span>
-
-            </div>
-        </li>
-        <li>
-            <div class="book_left">
-                <img src="https://img3.doubanio.com/lpic/s29276401.jpg" alt=""></div>
-            <div class="book_right">
-                <span>书名:好好学习</span>
-                <span >作者: 成甲</span>
-                <span >出版社:中信出版社</span>
-                <span >定价:42.00</span>
-                <span >ISBN:9787508671581</span>
-
-            </div>
-        </li>
-    </ul>
+            <else/>
+            暂无相关内容！
+        </if>
+    </div>
 </div>
-<include file="Public:footer" />
+<div id="full" class='weui-popup-container'>
+    <div class="weui-popup-modal">
+        <div class="weui_search_bar" id="search_bar">
+            <form class="weui_search_outer" action="{:U('home/index/index')}" method="post">
+                <div class="weui_search_inner">
+                    <i class="weui_icon_search"></i>
+                    <input type="search" name="book_name" class="weui_search_input" id="search_input" value="{$name}"
+                           placeholder="请输入书名、作者或出版社" required/>
+                    <a href="javascript:" class="weui_icon_clear" id="search_clear"></a>
+                </div>
+                <label for="search_input" class="weui_search_text" id="search_text">
+                    <i class="weui_icon_search"></i>
+                    <span>搜索</span>
+                </label>
+            </form>
+            <a href="javascript:" class="weui_search_cancel" id="search_cancel">取消</a>
+        </div>
+        <div class="weui-row">
+            <volist name="terms" id="vo">
+                <div class="weui-col-33"><a href="{:U('home/index/index',array('book_type'=>$vo[id]))}">{$vo.name}</a>
+                </div>
+            </volist>
+        </div>
+        <section style="margin-top: 50vh">
+            <a href="javascript:;" class="weui_btn weui_btn_plain_primary close-popup">关闭</a>
+        </section>
+    </div>
+</div>
+<include file="Public:footer"/>
 </body>
 <script>
+    $("#search").click(function () {
+        search_book();
+    });
+    function search_book() {
+        $("#full").addClass("weui-popup-container-visible");
+        $("#full").show();
+    }
+    function to_detail(isbn) {
+        window.location.href = "{:U('home/bookadmin/index/isbn/" + isbn + "')}";
+    }
     //顶部搜索框变色
-    $().ready(function(){
-        (function(){
+    $().ready(function () {
+        (function () {
             pos = 0;
             ticking = false;
             var header = document.querySelector(".h-p");
-            window.addEventListener("scroll", function(e){
+            window.addEventListener("scroll", function (e) {
                 pos = window.scrollY;
-                if(pos > 100&&!ticking){
+                if (pos > 100 && !ticking) {
                     header.classList.add("scrolledDown");
                     ticking = true;
                 }
-                if(pos < 100 && ticking){
+                if (pos < 100 && ticking) {
                     header.classList.remove("scrolledDown");
                     ticking = false;
                 }

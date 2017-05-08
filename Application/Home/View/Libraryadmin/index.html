@@ -1,0 +1,79 @@
+<include file="Public:script-load-page"/>
+<title>图书借阅系统</title>
+<style>
+   .content_top ul li{
+        border-radius: 15vw;
+        background: wheat;
+        list-style: none;
+        width: 21vw;
+        height: 22vw;
+        float: left;
+        text-align: center;
+        line-height: 14vh;
+        margin: 5vw 3vw 2vw 7vw;
+        font-size: 12px;
+    }
+</style>
+<body ontouchstart style="background: white">
+
+<div class="header" style="z-index:5;text-align: center">
+    馆内信息
+</div>
+<div class="content_normal" style="margin-top: 65px">
+    <div class="swiper-container">
+        <!-- Additional required wrapper -->
+        <div class="swiper-wrapper">
+            <!-- Slides -->
+            <volist name="swiper_img" id="vo">
+            <div class="swiper-slide"><img src="{$vo}" /></div>
+            </volist>
+        </div>
+        <!-- If we need pagination -->
+        <div class="swiper-pagination"></div>
+    </div>
+</div>
+
+<nav class="ma_top">
+    <table cellpadding="0" cellspacing="0">
+        <tbody>
+        <tr>
+            <td width="33%"><a href="{:U('library_information',array('type'=>0))}" class="img">馆内介绍</a></td>
+            <td width="33%"><a href="{:U('library_information',array('type'=>1))}" class="img2">馆内新闻</a></td>
+            <td width="33%"><a href="{:U('library_information',array('type'=>2))}" class="img3">馆内公告</a></td>
+        </tr>
+        <tr></tr>
+        <if condition="$user_type eq 2">
+        <tr>
+            <td width="33%"><a href="{:U('book_manage')}" class="img7">图书管理</a></td>
+            <td width="33%"><a href="{:U('reader_manage')}" class="img9">借阅管理</a></td>
+            <td width="33%"><a href="{:U('appointment_manage')}" class="img11">预约管理</a></td>
+
+        </tr>
+
+        <tr></tr></if>
+        <tr>
+            <td width="33%"><a href="{:U('library_information',array('type'=>5))}" class="img4">馆内讲座</a></td>
+            <td width="33%"><a href="{:U('library_information',array('type'=>4))}" class="img6">馆内课程</a></td>
+            <td width="33%"><a href="{:U('library_information',array('type'=>3))}" class="img5">馆内活动</a></td>
+        </tr>
+        <tr></tr>
+        <if condition="$user_type eq 2">
+        <tr>
+            <td width="33%"><a href="{:U('book_comment')}" class="img8">书评管理</a></td>
+            <td width="33%"><a href="{:U('book_message')}" class="img10">留言管理</a></td>
+            <td width="33%"><a href="{:U('book_terms')}" class="img12">分类管理</a></td>
+        </tr>
+        <tr></tr>
+            </if>
+        </tbody>
+    </table>
+</nav>
+<include file="Public:footer" />
+</body>
+<script>
+    $(".swiper-container").swiper({
+        loop: true,
+        autoplay: 3000
+    });
+</script>
+</html>

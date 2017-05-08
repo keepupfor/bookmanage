@@ -1,20 +1,101 @@
 <?php
 
 header("Content-type:text/html;charset=utf-8");
-
+/**
+ * 字符串截取，支持中文和其他编码
+ * @static
+ * @access public
+ * @param string $str 需要转换的字符串
+ * @param string $start 开始位置
+ * @param string $length 截取长度
+ * @param string $charset 编码格式
+ * @param string $suffix 截断显示字符
+ * @return string
+ */
+function msubstr($str, $start=0, $length, $charset="utf-8", $suffix=true) {
+    if(function_exists("mb_substr"))
+        $slice = mb_substr($str, $start, $length, $charset);
+    elseif(function_exists('iconv_substr')) {
+        $slice = iconv_substr($str,$start,$length,$charset);
+        if(false === $slice) {
+            $slice = '';
+        }
+    }else{
+        $re['utf-8']   = "/[\x01-\x7f]|[\xc2-\xdf][\x80-\xbf]|[\xe0-\xef][\x80-\xbf]{2}|[\xf0-\xff][\x80-\xbf]{3}/";
+        $re['gb2312'] = "/[\x01-\x7f]|[\xb0-\xf7][\xa0-\xfe]/";
+        $re['gbk']    = "/[\x01-\x7f]|[\x81-\xfe][\x40-\xfe]/";
+        $re['big5']   = "/[\x01-\x7f]|[\x81-\xfe]([\x40-\x7e]|\xa1-\xfe])/";
+        preg_match_all($re[$charset], $str, $match);
+        $slice = join("",array_slice($match[0], $start, $length));
+    }
+    return $suffix ? $slice.'...' : $slice;
+}
 /**
  * 返回用户id
  * @return integer 用户id
  */
+function get_type($type){
+    switch ($type){
+        case 0:$type='管内介绍';break;
+        case 1:$type='管内新闻';break;
+        case 2:$type='管内公告';break;
+        case 3:$type='管内活动';break;
+        case 4:$type='管内课程';break;
+        case 5:$type='管内讲座';break;
+    }
+    return $type;
+}
 function get_uid(){
     return $_SESSION['user']['userid'];
 }
-
+function get_user(){
+    $userid=get_uid();
+    $user_type=get_user_type();
+    if ($user_type==1){
+        $user_model=M('users');
+    }if ($user_type==2){
+        $user_model=M('admin_users');
+    }
+    $user=$user_model->where("id=$userid")->find();
+    return $user;
+}
+function save_data($id,$table,$data){
+    $model=M("$table");
+    $result=$model->where("id=$id")->save($data);
+    return $result;
+}
 function get_user_type(){
     return $_SESSION['user']['user_type'];
 }
 function get_refer_url(){
     return $_SERVER['HTTP_REFERER'];
+}
+function sp_password($passwd){
+    $spasswd = "###" . md5(md5("UewBc27f4YZvbr0e6p" . $passwd));
+    return $spasswd;
+}
+function reduce_sum($id){//库存减1
+    $result=M('details')->where("id=$id")->setDec("book_num");
+    return $result;
+}
+function add_sum($id){//库存加1
+    $result=M('details')->where("id=$id")->setInc("book_num");
+    return $result;
+}
+function add_score($id,$corn){//用户积分加
+    $result=M('users')->where("id=$id")->setInc("corn",$corn);
+    return $result;
+}
+function reduce_score($id,$corn){//用户积分减
+    $result=M('users')->where("id=$id")->setDec("corn",$corn);
+    return $result;
+}
+/**
+ * 获取分类列表
+ */
+function get_terms(){
+    $terms=M('terms')->where("status=1")->select();
+    return $terms;
 }
 /**
  * 检测是否登录
@@ -170,7 +251,42 @@ function word_time($time) {
  */
 function qrcode($url,$size=4){
     Vendor('Phpqrcode.phpqrcode');
-    QRcode::png($url,false,QR_ECLEVEL_L,$size,2,false,0xFFFFFF,0x000000);
-}
 
+//    $path = "images1/";
+    // 生成的文件名
+//    $fileName = $path.$size.'.png';
+    ob_start();
+    QRcode::png($url,false,QR_ECLEVEL_L,$size,2,false,0xFFFFFF,0x000000);
+    $imageString = base64_encode(ob_get_contents());
+    ob_end_clean();
+//    <img src="data:image/png;base64,这里是base64编码内容" />
+    return $imageString;
+}
+// 取Book信息
+function get_book_data($isbn) {
+    $appkey="c497a86c8427466bf5412afb0ee477ed";
+    vendor("Book.book");
+    $params=array('sub'=>$isbn,'key'=>$appkey);
+    $paramsstring=http_build_query($params);
+    $url = "http://feedback.api.juhe.cn/ISBN";//聚合数据接口
+//    $url = "http://api.douban.com/v2/book/isbn/".$isbn; 豆瓣接口
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL,$url.'?'.$paramsstring);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    $result = curl_exec($curl);
+    curl_close($curl);
+    $book_array = (array) json_decode($result, true);
+    if(!empty($book_array["result"]["title"])) {
+        $book_title = $book_array["result"]["title"];
+        $book_author = $book_array["result"]["author"];
+        $book_cover = $book_array["result"]["images_medium"];
+        $book_isbn = $book_array["result"]["isbn13"]; // ISBN13
+        $book_info = $book_array["result"]["summary"];
+        $book_publisher=$book_array["result"]["publisher"];
+        $book_price=$book_array["result"]["price"];
+        $book_pubdate=$book_array["result"]["pubdate"];
+        $book = new \Book($book_title, $book_isbn, $book_author, $book_cover, $book_info,$book_publisher,$book_price,$book_pubdate);
+    }
+    return $book;
+}
 

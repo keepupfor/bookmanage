@@ -9,6 +9,7 @@
     <!--jQuery weui-->
     <link rel="stylesheet" href="http://wx.365xuet.com/Public/Weui/css/weui.min.css">
     <link rel="stylesheet" href="http://wx.365xuet.com/Public/Weui/css/jquery-weui.css">
+    <link rel="stylesheet" type="text/css" href="/Public/css/style.css">
     <!-- Standard iPhone -->
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <!-- Retina iPhone -->
@@ -18,14 +19,20 @@
     <!-- Retina iPad -->
     <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad-152x152.png" />
 
-    <link rel="stylesheet" type="text/css" href="/bookmanage/Public/css/style.css">
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weui/js/jquery-2.1.4.js"></script>
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weui/js/jquery-weui.min.js"></script>
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/jquery.cookie.js"></script>
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/jquery.form.js"></script>
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/commjslib.js"></script>
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/layer.m/layer.m.js"></script>
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/h5.js"></script>
+    <script type="application/javascript" src="/Public/js/jquery.min..js"></script>
+    <script type="application/javascript" src="/Public/js/jquery-weui.min.js"></script>
+    <script type="application/javascript" src="/Public/js/jquery.cookie.js"></script>
+    <script type="application/javascript" src="/Public/js/jquery.form.js"></script>
+    <script type="application/javascript" src="/Public/js/commjslib.js"></script>
+    <script type="application/javascript" src="/Public/js/layer.m/layer.m.js"></script>
+    <script type="application/javascript" src="/Public/js/h5.js"></script>
+    <script type="application/javascript" src="/Public/js/imagevisible.js"></script>
+    <script type="application/javascript" src="/Public/js/swiper.js"></script>
+    <script>
+        function go_detail(isbn) {
+            window.location.href=" <?php echo U('home/Bookadmin/index/isbn/"+isbn+"');?>"
+        }
+    </script>
 </head>
 <body>
 <div class="header" style="text-align: center;z-index:5;">
@@ -89,7 +96,7 @@
             if (data.status==1){
                 $.hideLoading();
                 $.toast('登陆成功!',function () {
-                    window.location.href=data.url;
+                    window.location.href="<?php echo U('index/index');?>";
                 } );
             }
             if (data.status==0){

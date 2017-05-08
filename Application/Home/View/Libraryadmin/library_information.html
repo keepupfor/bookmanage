@@ -1,0 +1,142 @@
+<include file="Public:script-load-page"/>
+    <title>图书订阅管理系统</title>
+<body ontouchstart style="background: white">
+
+<div class="header" style="z-index:5;">
+    <a href="{:U('Libraryadmin/index')}"><div class="left_t header_back">
+
+    </div> </a>
+    <div class="middle_t site_20">{$title}</div>
+    <div class="right_t">
+        <if condition="$user_type eq 2">
+        <span class="rigth" id="add_info">
+            添加
+        </span></if>
+    </div>
+</div>
+<div class="content_normal">
+
+    <div class="weui_panel">
+        <!--<div class="weui_panel_hd">{$title}</div>-->
+        <volist name="info" id="vo">
+        <div class="weui_panel_bd" onclick="to_detail('{$vo.id}')">
+            <div class="weui_media_box weui_media_text">
+                <h4 class="weui_media_title">{$vo.title}</h4>
+                <p class="weui_media_desc">{$vo.content}</p>
+                <ul class="weui_media_info">
+                    <li class="weui_media_info_meta"><if condition="$vo.is_top eq 1"><a href="javascript:;" style="color: orangered">置顶</a></if></li>
+                    <li class="weui_media_info_meta">{$vo.addtime|msubstr=###,0,10,'utf-8',false}</li>
+                </ul>
+            </div>
+        </div>
+        </volist>
+    </div>
+</div>
+<div id="full" class='weui-popup-container'>
+    <div class="weui-popup-overlay"></div>
+    <div class="weui-popup-modal">
+        <form  name="form1" id="form1" enctype="multipart/form-data" action="{:U('public/ajax_request')}" method="post">
+            <article class="weui_article">
+                <div class="weui_cell_hd"><label class="weui_label">标题</label></div>
+                <div class="weui_cells weui_cells_form">
+                    <div class="weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <input class="weui_input" type="text" placeholder="请输入标题" name="title" value="{$info['title']}">
+                        </div>
+                    </div>
+                </div>
+                <div class="weui_cell_hd"><label class="weui_label">内容</label></div>
+                <div class="weui_cells weui_cells_form">
+                    <div class="weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <textarea class="weui_textarea" placeholder="请输入内容" name="content" rows="6">{$info['content']}</textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="weui_cell weui_cell_switch">
+                    <div class="weui_cell_hd weui_cell_primary">是否置顶</div>
+                    <div class="weui_cell_ft">
+                        <input class="weui_switch" type="checkbox">
+                    </div>
+                </div>
+                <div class="weui_cells weui_cells_form">
+                    <div class="weui_cell">
+                        <div class="weui_cell_bd weui_cell_primary">
+                            <div class="weui_uploader">
+                                <div class="weui_uploader_hd weui_cell">
+                                    <div class="weui_cell_bd weui_cell_primary">图片上传</div>
+                                </div>
+                                <div class="weui_uploader_bd">
+                                    <ul class="weui_uploader_files">
+                                        <li class="weui_uploader_file" style="margin-top:10px;width: 29%" id="image"></li>
+                                        <li class="weui_uploader_file" style="margin-top:10px;width: 29%">
+                                            <div class="weui_uploader_input_wrp" style="float: left">
+                                                <input class="weui_uploader_input" type="file"  name="img" id="img">
+                                            </div></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <input type="hidden" name="is_top" id="is_top" value="0">
+                <input type="hidden" name="table_name" value="news">
+                <input type="hidden" name="type" value="{$type}">
+                <section>
+                    <a href="javascript:;" class="weui_btn weui_btn_primary" id="save_info">确定提交</a>
+                    <a href="javascript:;" class="weui_btn weui_btn_plain_primary close-popup">关闭</a>
+                </section>
+
+            </article>
+        </form>
+    </div>
+</div>
+
+
+
+
+
+
+
+</body>
+<script>
+    $(function () {
+        var va;
+        $(".weui_switch").bind("click", function () {
+            ($(".weui_switch").prop("checked"))? va=1 : va=0;
+            $("#is_top").val(va);
+        });
+    });
+    function  to_detail(id) {
+        window.location.href="{:U('home/libraryadmin/library_information_detail/id/"+id+"')}";
+    }
+    //图片显示插件
+    $.imageFileVisible({
+        wrapSelector: "#image",
+        fileSelector: "#img",
+        width: 60,
+        height: 60,
+        num:1
+    });
+    $(document).on("click", "#add_info", function() {
+        $("#full").addClass("weui-popup-container-visible");
+        $("#full").show();
+    }).on("open", ".weui-popup-modal", function() {
+    }).on("close", ".weui-popup-modal", function() {
+    }).on("click","#save_info",function () {
+        $("#form1").ajaxSubmit({
+
+            type:"post",
+            dataType:"json",
+            data:{method:"add"},
+            success:function (data) {
+                if (data.status==1){
+                    $.toast("添加成功",function () {
+                        location.href=location.href;
+                    });
+                }
+            }
+        });
+    });
+</script>
+</html>

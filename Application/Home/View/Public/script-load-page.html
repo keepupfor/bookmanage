@@ -9,6 +9,7 @@
     <!--jQuery weui-->
     <link rel="stylesheet" href="http://wx.365xuet.com/Public/Weui/css/weui.min.css">
     <link rel="stylesheet" href="http://wx.365xuet.com/Public/Weui/css/jquery-weui.css">
+    <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css">
     <!-- Standard iPhone -->
     <link rel="apple-touch-icon" href="apple-touch-icon.png" />
     <!-- Retina iPhone -->
@@ -18,12 +19,18 @@
     <!-- Retina iPad -->
     <link rel="apple-touch-icon" sizes="152x152" href="touch-icon-ipad-152x152.png" />
 
-    <link rel="stylesheet" type="text/css" href="__PUBLIC__/css/style.css">
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weui/js/jquery-2.1.4.js"></script>
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weui/js/jquery-weui.min.js"></script>
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/jquery.cookie.js"></script>
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/jquery.form.js"></script>
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/commjslib.js"></script>
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/layer.m/layer.m.js"></script>
-    <script type="application/javascript" src="http://wx.365xuet.com/Public/Weixin/js/h5.js"></script>
+    <script type="application/javascript" src="__PUBLIC__/js/jquery.min..js"></script>
+    <script type="application/javascript" src="__PUBLIC__/js/jquery-weui.min.js"></script>
+    <script type="application/javascript" src="__PUBLIC__/js/jquery.cookie.js"></script>
+    <script type="application/javascript" src="__PUBLIC__/js/jquery.form.js"></script>
+    <script type="application/javascript" src="__PUBLIC__/js/commjslib.js"></script>
+    <script type="application/javascript" src="__PUBLIC__/js/layer.m/layer.m.js"></script>
+    <script type="application/javascript" src="__PUBLIC__/js/h5.js"></script>
+    <script type="application/javascript" src="__PUBLIC__/js/imagevisible.js"></script>
+    <script type="application/javascript" src="__PUBLIC__/js/swiper.js"></script>
+    <script>
+        function go_detail(isbn) {
+            window.location.href=" {:U('home/Bookadmin/index/isbn/"+isbn+"')}"
+        }
+    </script>
 </head>

@@ -10,27 +10,27 @@
 <title>跳转提示</title>
 <style type="text/css">
 *{ padding: 0; margin: 0; }
-body{ background: #fff; font-family: '微软雅黑'; color: #333; font-size: 16px; }
-.system-message{ padding: 24px 48px; }
+body{ background: #eee; font-family: '微软雅黑'; color: #333; font-size: 16px; }
+.system-message{ padding: 24px 48px; width:500px;height:200px;margin:0 auto;border:5px solid #3BB64C;background:#fff;margin-top:100px;}
 .system-message h1{ font-size: 100px; font-weight: normal; line-height: 120px; margin-bottom: 12px; }
-.system-message .jump{ padding-top: 10px}
+.system-message h2{ font-size: 30px; font-weight: normal; line-height: 30px; margin-bottom: 20px;margin-top: 20px; color:#3BB64C;}
+
+.system-message .jump{ padding-top: 10px;}
 .system-message .jump a{ color: #333;}
-.system-message .success,.system-message .error{ line-height: 1.8em; font-size: 36px }
+.system-message .success,.system-message .error{ line-height: 1.8em; font-size: 20px }
 .system-message .detail{ font-size: 12px; line-height: 20px; margin-top: 12px; display:none}
 </style>
 </head>
 <body>
 <div class="system-message">
 <?php if(isset($message)) {?>
-<h1>:)</h1>
 <p class="success"><?php echo($message); ?></p>
 <?php }else{?>
-<h1>:(</h1>
 <p class="error"><?php echo($error); ?></p>
 <?php }?>
 <p class="detail"></p>
 <p class="jump">
-页面自动 <a id="href" href="<?php echo($jumpUrl); ?>">跳转</a> 等待时间： <b id="wait"><?php echo($waitSecond); ?></b>
+页面自动 <a id="href" href="<?php echo($jumpUrl); ?>">跳转</a> 等待时间： <b id="wait"><?php if($waitSecond<5) echo '5'; else echo($waitSecond); ?></b>
 </p>
 </div>
 <script type="text/javascript">
