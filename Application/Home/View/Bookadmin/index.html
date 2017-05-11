@@ -57,6 +57,23 @@
               </p></dd>
           <a  onclick="showall('nr')" class="nr">查看全部>>></a>
       </dl>
+      <if condition="!empty($comments)">
+          <div class="weui_panel">
+              <div class="weui_panel_hd">书友评论</div>
+              <div class="weui_panel_bd">
+                  <volist name="comments" id="vo">
+                      <div class="weui_media_box weui_media_text">
+                          <h4 class="weui_media_title">{$vo.full_name}</h4>
+                          <p class="weui_media_desc">{$vo.content}</p>
+                          <ul class="weui_media_info">
+                              <li class="weui_media_info_meta">{$vo.addtime}</li>
+                              <!--<li class="weui_media_info_meta weui_media_info_meta_extra">其它信息</li>-->
+                          </ul>
+                      </div>
+                  </volist>
+              </div>
+          </div>
+      </if>
   </div>
     <script>
         function GetRTime(time,num) {

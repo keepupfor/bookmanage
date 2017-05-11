@@ -9,6 +9,7 @@ class BookadminController extends AdminbaseController  {
          $detail=M('details')->where("isbn=$isbn")->find();
         $book_id=$detail['id'];
         $userid=get_uid();
+        $this->comments=M('comments')->where("status=1 and post_id=$book_id")->select();
         $is_order=M('order')->where("user_id=$userid and book_id=$book_id and status in(0,1,2)")->find();
         $is_favorite=M('favorites')->where("uid=$userid and object_id=$book_id and status=1")->find();
         $this->is_favorite=0;

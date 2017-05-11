@@ -121,9 +121,9 @@ a{color:grey;}
 .content_top img{height: 100%;width: 100%}
 .content_description{width: 95vw;margin: 0 auto 45px auto}
 .content_description dl dt{padding:1vh 0 1vh 5vw;border-left:2px solid orange ;background: #ccc}
-.content_description dl dd{background:white;margin: 1vh 2vw;height: 200px;overflow: hidden;}
+.content_description dl dd{background:white;height: 200px;overflow: hidden;}
 .content_description dl p{text-indent: 2em; text-overflow: ellipsis;word-break:break-all}
-.content_description dl a{    display: block;  width: 91vw;  background: white;  margin: -1vh auto 0 auto;}
+.content_description dl a{    display: block;  width: 95vw;  background: white;  margin: -1vh auto 0 auto;}
 .content_bottom{margin: auto;position: fixed;  bottom: 0;  width: 99vw; line-height: 43px;text-align: center; background: white;}
 .person_center_top{ width: 100vw;      margin: 50px 0 2vh 0;  position: relative;  background: -webkit-gradient(linear, 10% 0%, 10% 100%,from(#f7efd6), to(rgb(95,196,229))); }
 .person_center_top ul li img{width: 70px;height: 70px;border-radius: 70px}
