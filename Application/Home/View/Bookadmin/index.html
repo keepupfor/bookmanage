@@ -343,8 +343,9 @@
         var objectid="{$info.id}";
         $.post("{:U('public/ajax_request')}",{method:"add",table_name:"favorites",uid:uid,object_id:objectid},function (data) {
             if (data.status==1){
-                    $("#cancel_favorite").css("display","block");
-                    $("#favorite").hide();
+                $.toast("收藏成功",function () {
+                    location.href=location.href;
+                });
             }
             else {
                 $.toast("收藏失败","forbidden");
@@ -355,8 +356,9 @@
         var id="{$favorite['id']}";
         $.post("{:U('public/ajax_request')}",{method:"save",table_name:"favorites",id:id,status:2},function (data) {
             if (data.status==1){
-                    $("#favorite").css("display","block");
-                    $("#cancel_favorite").hide();
+                $.toast("取消收藏失败",function () {
+                    location.href=location.href;
+                });
             }
             else {
                 $.toast("取消收藏失败","forbidden");

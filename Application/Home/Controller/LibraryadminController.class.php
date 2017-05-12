@@ -9,7 +9,7 @@ class LibraryadminController extends AdminbaseController
     {
 
         $this->assign("foot", 2);
-        $swiper_img = M('news')->where("type=0 and status=1")->order("is_top desc ,addtime desc")->limit(4)->getField("img", true);
+        $swiper_img = M('news')->where("type=0 and status=1 and img is not null")->order("is_top desc ,addtime desc")->limit(4)->getField("img", true);
         $this->swiper_img = $swiper_img;
         $this->display();
     }
@@ -157,6 +157,30 @@ class LibraryadminController extends AdminbaseController
         }
         $this->terms = $terms;
 
+        $this->display();
+    }
+    public function user_manage(){
+        if (IS_POST){
+            $id=$_POST['id'];
+            $user=M('users')->where("id=$id")->find();
+            $this->ajaxReturn(array('status'=>1,'user'=>$user));
+        }
+        $this->title = "会员管理";
+        $users=M('users')->order("user_status desc")->select();
+        foreach ($users as $k=>&$v){
+            if ($v['user_status']==1)
+            {
+                $v['title']='禁用';
+                $v['result']=0;
+            }
+            if ($v['user_status']==0)
+            {
+                $v['title']='启用';
+                $v['result']=1;
+            }
+
+        }
+        $this->users=$users;
         $this->display();
     }
     public function set_qrcode()

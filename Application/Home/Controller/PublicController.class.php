@@ -27,16 +27,20 @@ class PublicController extends Controller
                 $sql = "select * from bdm28103326_db.book_users where mobile=$mobile and user_pass='$spasswd'";
                 $query = $model->query($sql);
                 if ($query != null && count($query) == 1) {
-                    $user = array("user_type" => $query[0]["user_type"], "userid" => $query[0]["id"]);
-                    session("user", $user);
-                    $where['id'] = $query[0]["id"];
-                    $data = array(
-                        'last_login_time' => date("Y-m-d H:i:s"),
-                        'last_login_ip' => get_client_ip(0, true),
-                    );
-                    $users_model = M('users');
-                    $rel = $users_model->where($where)->save($data);
-                    $this->ajaxReturn(array('status' => 1, 'url' => $url));
+                    if ($query[0]["user_status"]==0){
+                        $this->ajaxReturn(array('status' => -1));die;
+                    }else{
+                        $user = array("user_type" => $query[0]["user_type"], "userid" => $query[0]["id"]);
+                        session("user", $user);
+                        $where['id'] = $query[0]["id"];
+                        $data = array(
+                            'last_login_time' => date("Y-m-d H:i:s"),
+                            'last_login_ip' => get_client_ip(0, true),
+                        );
+                        $users_model = M('users');
+                        $rel = $users_model->where($where)->save($data);
+                        $this->ajaxReturn(array('status' => 1, 'url' => $url));
+                    }
                 } else {
                     $this->ajaxReturn(array('status' => 0));
                 }
@@ -76,8 +80,9 @@ class PublicController extends Controller
     {
         if ($_POST) {
             $mobile = I("post.t_mobile");
-            $user_pass = I("post.t_password");
-            $str = I("post.identify");
+            $user_pass = I("post.t_password")? I("post.t_password"):123456;
+            $str = I("post.identify")? I("post.identify"):1;
+            $user_name=I("post.username");
             if ($str == 1) {
                 $userMdl = M('users');
             } else {
@@ -93,12 +98,12 @@ class PublicController extends Controller
                     $result = $userMdl->add(array(
                         "mobile" => $mobile,
                         "user_pass" => "###" . md5(md5("UewBc27f4YZvbr0e6p" . $user_pass)),
-                        "create_time" => date("Y-m-d H:i:s"),
+                        "addtime" => date("Y-m-d H:i:s"),
                         'last_login_time' => date("Y-m-d H:i:s"),
                         'create_ip' => get_client_ip(0, true),
                         'last_login_ip' => get_client_ip(0, true),
                         "user_type" => 1,//1会员，2管理员
-                        'user_name' => $encode_mobile,
+                        'user_name' => $user_name?$user_name:$encode_mobile,
                         'user_secret'=>123456
                     ));
                     if ($result && $mobile) {
@@ -109,7 +114,7 @@ class PublicController extends Controller
                         );
                         $userMdl->where($where)->save($data);
                         $user = array("user_type" => 1, "userid" => $result);
-                        session("user", $user);
+                        if (empty($user_name))session("user", $user);
                         $this->ajaxReturn(array('status' => 1));
                     } else {
                         $this->ajaxReturn(array('status' => 0));

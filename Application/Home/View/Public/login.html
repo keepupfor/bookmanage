@@ -64,6 +64,11 @@
                     window.location.href="{:U('index/index')}";
                 } );
             }
+            if (data.status==-1){
+                $.hideLoading();
+                $.toast('此账号已被禁用，请联系管理员!',"forbidden",function () {
+                } );
+            }
             if (data.status==0){
                 $.hideLoading();
                 $.toast('用户名或者密码错误!',"forbidden");

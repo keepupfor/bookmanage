@@ -1,0 +1,212 @@
+<include file="Public:script-load-page"/>
+<title>图书订阅管理系统</title>
+<body ontouchstart style="background: white">
+
+<div class="header" style="z-index:5;">
+    <a href="{:U('Libraryadmin/index')}"><div class="left_t header_back">
+
+    </div></a>
+    <div class="middle_t site_20">{$title}</div>
+    <div class="right_t">
+        <span class="rigth" id="add_user">
+            添加
+        </span>
+    </div>
+</div>
+<div class="content_normal">
+
+    <div class="weui_cells weui_cells_access">
+        <volist name="users" id="vo" key="$key">
+        <a class="weui_cell user_list" href="javascript:;" id="{$vo.id}" title="{$vo.title}" result="{$vo.result}">
+            <div class="weui_cell_bd weui_cell_primary">
+                <div class="weui_media_box weui_media_text">
+                    <h4 class="weui_media_title">{$vo.user_name}</h4>
+                    <ul class="weui_media_info">
+                        <li class="weui_media_info_meta">{$vo.mobile}</li>
+                        <li class="weui_media_info_meta">{$vo.addtime}</li>
+                        <li class="weui_media_info_meta" style="color: orange">积分:{$vo.corn}</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="weui_cell_ft"><if condition="$vo.user_status eq 1">正常</if><if condition="$vo.user_status eq 0">已禁用</if></div>
+        </a>
+        </volist>
+    </div>
+</div>
+
+<div id="full" class='weui-popup-container'>
+    <div class="weui-popup-overlay"></div>
+    <div class="weui-popup-modal">
+        <form  name="form1" id="form1" enctype="multipart/form-data" action="{:U('public/ajax_request')}" method="post">
+            <div class="weui_cells weui_cells_form">
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label class="weui_label">手机号</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input name="mobile" class="weui_input" type="text" placeholder="请输入手机号" value="">
+                    </div>
+                </div>
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label class="weui_label">姓名</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input name="user_name" class="weui_input" type="text" placeholder="请输入姓名" value="">
+                    </div>
+                </div>
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label class="weui_label">安全码</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input name="user_secret" class="weui_input" type="text" placeholder="请输入密保(找回密码用)" value="">
+                    </div>
+                </div>
+                <div class="weui_cell weui_cell_select">
+                    <div class="weui_cell_hd"><label style="padding-left: 15px; " for="" class="weui_label">性别</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <select id="sex" name="sex" class="weui_select" >
+                            <option value="0">保密</option>
+                            <option value="1">男</option>
+                            <option value="2">女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="weui_btn_area">
+                    <section>
+                        <a href="javascript:;" class="weui_btn weui_btn_primary" id="save_info">保存</a>
+                        <a href="javascript:;" class="weui_btn weui_btn_plain_primary close-popup">关闭</a>
+                    </section>
+                </div>
+            </div>
+            <input type="hidden" name="table_name" value="users">
+            <input type="hidden" name="method" value="">
+            <input type="hidden" name="id">
+        </form>
+    </div>
+</div>
+<div id="full2" class='weui-popup-container'>
+    <div class="weui-popup-overlay"></div>
+    <div class="weui-popup-modal">
+        <form  name="form2" id="form2" enctype="multipart/form-data" action="{:U('public/register')}" method="post">
+            <div class="weui_cells weui_cells_form">
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label class="weui_label">手机号</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input name="t_mobile" class="weui_input" type="text" placeholder="请输入手机号" value="">
+                    </div>
+                </div>
+                <div class="weui_cell">
+                    <div class="weui_cell_hd"><label class="weui_label">姓名</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <input name="username" class="weui_input" type="text" placeholder="请输入姓名" value="">
+                    </div>
+                </div>
+                <div class="weui_cell weui_cell_select">
+                    <div class="weui_cell_hd"><label style="padding-left: 15px; " for="" class="weui_label">性别</label></div>
+                    <div class="weui_cell_bd weui_cell_primary">
+                        <select  name="sex" class="weui_select" >
+                            <option value="0">保密</option>
+                            <option value="1">男</option>
+                            <option value="2">女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="weui_cell">   <label >密码默认123456</label></div>
+                <div class="weui_btn_area">
+                    <section>
+                        <a href="javascript:;" class="weui_btn weui_btn_primary" id="submit_info">提交</a>
+                        <a href="javascript:;" class="weui_btn weui_btn_plain_primary close-popup">关闭</a>
+                    </section>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    $(document).on("click", ".user_list", function() {
+        var id=$(this).attr("id");
+        var re=$(this).attr("result");
+        var title=$(this).attr("title");
+        $.actions({
+            title: "选择操作",
+            onClose: function() {
+            },
+            actions: [
+                {
+                    text: title,
+                    className: "color-primary",
+                    onClick: function() {
+                        $.post("{:U('public/ajax_request')}",{method:"save",table_name:"users",user_status:re,id:id},function (data) {
+                            if (data.status==1){
+                                $.toast(title+"成功",function () {
+                                    location.href=location.href;
+                                });
+                            }
+                            else {
+                                $.toast(title+"失败","forbidden");
+                            }
+                        })
+                    }
+                },
+                {
+                    text: "编辑",
+                    className: "color-warning",
+                    onClick: function() {
+                        $.post("{:U('libraryadmin/user_manage')}",{id:id},function (data) {
+                            if (data.status==1){
+                                $("input[name=method]").val("save");
+                                $("input[name=id]").val(id);
+                                $("input[name=mobile]").val(data.user.mobile);
+                                $("input[name=user_name]").val(data.user.user_name);
+                                $("input[name=user_secret]").val(data.user.user_secret);
+                                $("#sex option[value="+data.user.sex+"]").attr("selected", true);
+                                $("#full").addClass("weui-popup-container-visible");
+                                $("#full").show();
+                            }
+                            else {
+                                $.toast("用户信息获取失败","forbidden");
+                            }
+                        });
+                    }
+                }
+            ]
+        });
+    }).on("open", ".weui-popup-modal", function() {
+    }).on("close", ".weui-popup-modal", function() {
+    }).on("click","#add_user",function () {
+        $("#full2").addClass("weui-popup-container-visible");
+        $("#full2").show();
+    }).on("click","#save_info",function () {
+        $("#form1").ajaxSubmit({
+            type:"post",
+            dataType:"json",
+            success:function (data) {
+                if (data.status==1){
+                    $.toast("修改成功",function () {
+                        location.href=location.href;
+                    });
+                }
+                else{
+                    $.toast("修改失败","forbidden",function () {
+                          location.href=location.href;
+                    });
+                }
+            }
+        });
+    }).on("click","#submit_info",function () {
+        $("#form2").ajaxSubmit({
+            type:"post",
+            dataType:"json",
+            success:function (data) {
+                if (data.status==1){
+                    $.toast("添加成功",function () {
+                          location.href=location.href;
+                    });
+                }
+                else{
+                    $.toast(data.info,"forbidden",function () {
+                          location.href=location.href;
+                    });
+                }
+            }
+        });
+    });
+</script>
+</body>
+</html>
